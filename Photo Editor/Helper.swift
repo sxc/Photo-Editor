@@ -10,5 +10,7 @@ import Foundation
 enum FilterType {
     case Original
     case Sepia
+    case Mono
+    case Vibrance
     
 }

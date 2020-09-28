@@ -35,6 +35,28 @@ class ImageController: ObservableObject {
                 }
             }
        
+        case .Mono:
+            let filter = CIFilter(name: "CIPhotoEffectMono")
+            filter?.setValue(imageToEdit, forKey: "inputImage")
+            if let output = filter?.outputImage {
+                if let cgimg = context.createCGImage(output, from: output.extent) {
+                    let processedImage = UIImage(cgImage: cgimg)
+                    return processedImage
+                }
+            }
+            
+            
+        case .Vibrance:
+            let filter = CIFilter(name: "CIVibrance")
+            filter?.setValue(imageToEdit, forKey: "inputImage")
+            filter?.setValue(20, forKey: "inputAmount")
+            
+            if let output = filter?.outputImage {
+                if let cgimg = context.createCGImage(output, from: output.extent) {
+                    let processedImage = UIImage(cgImage: cgimg)
+                    return processedImage
+                }
+            }
             
         }
         return inputImage

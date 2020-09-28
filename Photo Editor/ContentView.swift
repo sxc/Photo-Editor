@@ -13,7 +13,7 @@ struct ContentView: View {
     @State var showImagePicker = false
     
     
-    let availableFilters: [FilterType] = [.Original, .Sepia]
+    let availableFilters: [FilterType] = [.Original, .Sepia, .Mono, .Vibrance]
     
     var body: some View {
         NavigationView {
@@ -33,7 +33,7 @@ struct ContentView: View {
                                 Button(action: {
                                     imageController.displayedImage = imageController.generateFilteredImage(inputImage: originalImage, filter: filter)
                                 }) {
-                                    ThumbnailView(imageToDisplay: imageToDisplay, width: geometry.size.width*(21/100), height: geometry.size.height*(15/100), filterName: "\(filter)")
+                                    ThumbnailView(imageToDisplay: imageController.generateFilteredImage(inputImage: originalImage.compressed(), filter: filter)!, width: geometry.size.width*(21/100), height: geometry.size.height*(15/100), filterName: "\(filter)")
                                 }
                                 
                             }
