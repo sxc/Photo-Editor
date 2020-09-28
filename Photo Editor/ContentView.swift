@@ -8,28 +8,45 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    @EnvironmentObject var imageController: ImageController
+    @State var showImagePicker = false
+    
     var body: some View {
         NavigationView {
             GeometryReader { geometry in
                 VStack {
-                    Image("testImage")
+                    if let imageToDisplay = imageController.displayedImage {
+                    
+                        Image(uiImage: imageToDisplay)
                         .resizable()
                         .aspectRatio(contentMode: /*@START_MENU_TOKEN@*/.fill/*@END_MENU_TOKEN@*/)
                         .frame(width: geometry.size.width, height: geometry.size.height * 0.75)
                         .clipped()
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack {
-                            ThumbnailView(width: geometry.size.width*(21/100), height: geometry.size.height*(15/100), filterName: "Original")
+                            ThumbnailView(imageToDisplay: imageToDisplay, width: geometry.size.width*(21/100), height: geometry.size.height*(15/100), filterName: "Original")
                         }
                     }
                     .frame(width: geometry.size.width, height: geometry.size.height * (1/4))
-                    
+                    } else {
+                        Spacer()
+                        Text("Upload a photo to start editing.")
+                            .frame(width: geometry.size.width, height: geometry.size.height*(0.25))
+                        Spacer()
+                    }
                 }
             }
+            
+            .sheet(isPresented: $showImagePicker, content: {
+                Text("ImagePicker")
+            })
+            
+            
             .navigationBarTitle("Filter App", displayMode: .inline)
             .toolbar(content: {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    GalleryButton()
+                    GalleryButton(showImagePicker: $showImagePicker)
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     SaveButton()
@@ -42,11 +59,13 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        ContentView().environmentObject(ImageController())
     }
 }
 
 struct ThumbnailView: View {
+    
+    let imageToDisplay: UIImage
     
     let width: CGFloat
     let height: CGFloat
@@ -56,7 +75,7 @@ struct ThumbnailView: View {
         VStack {
             Text("Original")
                 .foregroundColor(Color("LightGray"))
-            Image("testImage")
+            Image(uiImage: imageToDisplay)
                 .renderingMode(.original)
                 .resizable()
                 .aspectRatio(contentMode: /*@START_MENU_TOKEN@*/.fill/*@END_MENU_TOKEN@*/)
@@ -71,9 +90,12 @@ struct ThumbnailView: View {
 }
 
 struct GalleryButton: View {
+    
+    @Binding var showImagePicker: Bool
+    
     var body: some View {
         Button(action: {
-            print("Open image gallery.")
+            showImagePicker = true
         }) {
             Image(systemName: "photo")
                 .imageScale(.large)
