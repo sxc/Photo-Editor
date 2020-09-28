@@ -12,11 +12,14 @@ struct ContentView: View {
     @EnvironmentObject var imageController: ImageController
     @State var showImagePicker = false
     
+    
+    let availableFilters: [FilterType] = [.Original, .Sepia]
+    
     var body: some View {
         NavigationView {
             GeometryReader { geometry in
                 VStack {
-                    if let imageToDisplay = imageController.displayedImage {
+                    if let imageToDisplay = imageController.displayedImage, let originalImage = imageController.unprocessedImage {
                     
                         Image(uiImage: imageToDisplay)
                         .resizable()
@@ -25,7 +28,19 @@ struct ContentView: View {
                         .clipped()
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack {
-                            ThumbnailView(imageToDisplay: imageToDisplay, width: geometry.size.width*(21/100), height: geometry.size.height*(15/100), filterName: "Original")
+                            
+                            ForEach(availableFilters, id: \.self) { filter in
+                                Button(action: {
+                                    imageController.displayedImage = imageController.generateFilteredImage(inputImage: originalImage, filter: filter)
+                                }) {
+                                    ThumbnailView(imageToDisplay: imageToDisplay, width: geometry.size.width*(21/100), height: geometry.size.height*(15/100), filterName: "\(filter)")
+                                }
+                                
+                            }
+                            
+                         
+                            
+                            
                         }
                     }
                     .frame(width: geometry.size.width, height: geometry.size.height * (1/4))
@@ -73,7 +88,7 @@ struct ThumbnailView: View {
     
     var body: some View {
         VStack {
-            Text("Original")
+            Text(filterName)
                 .foregroundColor(Color("LightGray"))
             Image(uiImage: imageToDisplay)
                 .renderingMode(.original)
