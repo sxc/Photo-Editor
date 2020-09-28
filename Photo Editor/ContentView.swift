@@ -39,7 +39,7 @@ struct ContentView: View {
             }
             
             .sheet(isPresented: $showImagePicker, content: {
-                Text("ImagePicker")
+                ImagePicker(imageController: imageController, showImagePicker: $showImagePicker)
             })
             
             

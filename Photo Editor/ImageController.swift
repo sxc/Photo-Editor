@@ -9,6 +9,10 @@ import Foundation
 import SwiftUI
 
 class ImageController: ObservableObject {
-    var unprocessedImage: UIImage?
+    @Published var unprocessedImage: UIImage? {
+        didSet {
+            displayedImage = unprocessedImage
+        }
+    }
     var displayedImage: UIImage?
 }
